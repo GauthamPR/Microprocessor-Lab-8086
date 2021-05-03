@@ -3,8 +3,8 @@ data SEGMENT
 	msg2   DB 0ah, 0dh, "Enter Sub-string: $"
 	affirm DB 0ah, 0dh, "Sub-String$"
 	deny   DB 0ah, 0dh , "Not a Sub-string$"
-	subStr DB 0Fh dup('$')
 	str    DB 0Fh dup('$')
+	subString DB 0Fh dup('$')
 	lenStr DW ?
 	eos    DB '$'
 data ENDS
@@ -29,7 +29,7 @@ code SEGMENT
 	                 LEA    DX, msg2
 	                 MOV    AH, 09h
 	                 INT    21h
-	                 LEA    DI, subStr
+	                 LEA    DI, subString
 	loopSubStrInput: MOV    AH, 01h
 	                 INT    21h
 	                 CMP    AL, 0dh
@@ -37,7 +37,7 @@ code SEGMENT
 	                 MOV    [DI], AL
 	                 INC    DI
 	                 JMP    loopSubStrInput
-	checkStart:      LEA    SI, subStr
+	checkStart:      LEA    SI, subString
 	                 LEA    DI, str
 	                 MOV    AX, lenStr
 	                 SUB    AX, CX
