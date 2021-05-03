@@ -5,7 +5,7 @@ data segment
     resultDiff db 0ah, 0dh, "A-B: $"
     resultQuo db 0ah, 0dh, "A/B: $"
     resultPdt db 0ah, 0dh, "A*B: $"
-	resultRem db 0ah, 0dh, "Remainder: $"
+	resultRem db "   Reminder: $"
 	num dw ?
 	num1 dw ?
 	a dw ?
@@ -14,6 +14,7 @@ data segment
     diff dw ?
     quo dw ?
     pdt dw ?
+	rem dw ?
 data ends
 
 display macro msg
@@ -87,7 +88,10 @@ calculate macro num1, num2
 	mov dx, 0000h
     div bx
     mov quo, ax
+	mov rem, dx
     print quo
+	display resultRem
+	print rem
 endm
 code segment
 assume cs:code,ds:data
