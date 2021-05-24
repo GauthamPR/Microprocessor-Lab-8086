@@ -12,6 +12,7 @@ data SEGMENT
 	lenStr DW 0000h
     lenSubStr DW 0000h
     lenReplaceStr DW 0000h
+    index DW 0000h
 	eos    DB '$'
 data ENDS
 code SEGMENT
@@ -66,11 +67,10 @@ code SEGMENT
 	                 CMP    BL, DL
 	                 JE     checkConsecutive
                      LEA    DI, finalStr
-                     MOV    AX, lenStr
-	                 SUB    AX, CX
+                     MOV    AX, index
 	                 ADD    DI, AX
                      MOV    [DI], DX
-                     INC    DI
+                     INC    index
 	                 LOOP   checkStart
 	printDeny:       LEA    DX, finalMsg
 	                 JMP    exit
@@ -82,23 +82,20 @@ code SEGMENT
 	                 JE     startReplace
 	                 CMP    BL, DL
 	                 JE     checkConsecutive
+                     DEC    CX
 	                 JMP    checkStart
     startReplace:    LEA    SI, replaceStr
                      LEA    DI, finalStr
                      MOV    AX, lenStr
 	                 SUB    AX, CX
 	                 ADD    DI, AX
-                     MOV    AX, lenStr
-                     SUB    AX, lenSubStr
-                     MOV    AX, lenStr
-                     ADD    AX, lenReplaceStr
                      SUB    CX, lenSubStr
 	doReplace:       MOV    AX, [SI]
                      MOV    [DI], AX
                      CMP    [SI], '$'
                      JE     checkStart
                      INC    SI
-                     INC    lenStr
+                     INC    index
                      INC    DI
 	                 JMP    doReplace
 	exit:            MOV    AH, 09h
