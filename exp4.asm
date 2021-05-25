@@ -1,7 +1,7 @@
 data SEGMENT
 	msg1   DB 0ah, 0dh, "Enter String: $"
 	msg2   DB 0ah, 0dh, "Enter Sub-string to replace: $"
-    msg3   DB 0ah, 0dh, "Enter Sub-string to replace with: $"
+    msg3   DB 0ah, 0dh, "Enter string to replace with: $"
 	affirm DB 0ah, 0dh, "Sub-String$"
 	deny   DB 0ah, 0dh , "Not a Sub-string$"
 	str    DB 2Fh dup('$')
@@ -9,9 +9,8 @@ data SEGMENT
     replaceStr DB 2Fh dup('$')
     finalMsg DB 0ah, 0dh, "Output: "
     finalStr DB 4Fh dup('$')
-	lenStr DW 0000h
-    lenSubStr DW 0000h
-    lenReplaceStr DW 0000h
+	lenSubStr DW 0000h
+	restorePoint DW ?
     index DW 0000h
 	eos    DB '$'
 data ENDS
@@ -24,16 +23,16 @@ code SEGMENT
 	                 MOV    AH, 09h
 	                 INT    21h
 	                 LEA    DI, str
+					 MOV	restorePoint, DI
 	loopStrInput:    MOV    AH, 01h
 	                 INT    21h
 	                 CMP    AL, 0dh
 	                 JE     subStrInput
-	                 INC    CX
 	                 MOV    [DI], AL
 	                 INC    DI
+					 INC	CX
 	                 JMP    loopStrInput
-	subStrInput:     MOV    lenStr, CX
-	                 LEA    DX, msg2
+	subStrInput:     LEA    DX, msg2
 	                 MOV    AH, 09h
 	                 INT    21h
 	                 LEA    DI, subString
@@ -41,7 +40,7 @@ code SEGMENT
 	                 INT    21h
 	                 CMP    AL, 0dh
 	                 JE     replaceStrInput
-                     INC    lenSubStr
+					 INC	lenSubStr
 	                 MOV    [DI], AL
 	                 INC    DI
 	                 JMP    loopSubStrInput
@@ -53,22 +52,20 @@ code SEGMENT
 	                 INT    21h
 	                 CMP    AL, 0dh
 	                 JE     checkStart
-                     INC    lenReplaceStr
 	                 MOV    [DI], AL
 	                 INC    DI
 	                 JMP    loopReplaceStrInput
 	checkStart:      LEA    SI, subString
-	                 LEA    DI, str
-	                 MOV    AX, lenStr
-	                 SUB    AX, CX
-	                 ADD    DI, AX
+	                 MOV    DI, restorePoint
 	                 MOV    DX, [DI]
 	                 MOV    BX, [SI]
+					 INC	restorePoint
 	                 CMP    BL, DL
 	                 JE     checkConsecutive
+	resumeCheckStart:MOV    DI, restorePoint
+	                 MOV    DX, [DI-1]
                      LEA    DI, finalStr
-                     MOV    AX, index
-	                 ADD    DI, AX
+	                 ADD    DI, index
                      MOV    [DI], DX
                      INC    index
 	                 LOOP   checkStart
@@ -82,14 +79,15 @@ code SEGMENT
 	                 JE     startReplace
 	                 CMP    BL, DL
 	                 JE     checkConsecutive
-                     DEC    CX
-	                 JMP    checkStart
+	                 JMP    resumeCheckStart
     startReplace:    LEA    SI, replaceStr
                      LEA    DI, finalStr
-                     MOV    AX, lenStr
-	                 SUB    AX, CX
-	                 ADD    DI, AX
+	                 ADD	DI, index
                      SUB    CX, lenSubStr
+					 MOV 	AX, restorePoint
+					 ADD	AX, lenSubStr
+					 DEC	AX
+					 MOV	restorePoint, AX
 	doReplace:       MOV    AX, [SI]
                      MOV    [DI], AX
                      CMP    [SI], '$'
