@@ -3,7 +3,7 @@ data segment
 	heightMsg  DB 0ah, 0dh, "Enter height of matrices: $"
 	mtx1Msg  DB 0ah, 0dh, "Enter matrix 1: $"
 	mtx2Msg  DB 0ah, 0dh, "Enter matrix 2: $"
-	padding  DB 0ah, 0dh, "$"
+	newline  DB 0ah, 0dh, "$"
 	finalMsg  DB 0ah, 0dh, "Sum: $"
 	space     DB " $"
     convertedNum DW ?
@@ -79,14 +79,14 @@ code segment
                   MOV   DI, 0000h
     temp:         read mtx1[DI]
                   INC DI
-                  display padding
+                  display newline
                   LOOP  temp
                   display mtx2Msg
                   MOV   CX, length
                   MOV   DI, 0000h
     temp2:        read mtx2[DI]
                   INC DI
-                  display padding
+                  display newline
                   LOOP  temp2
                   MOV     CX, length
                   MOV     DI, 0000h
@@ -97,11 +97,18 @@ code segment
                   INC     DI
                   LOOP    L1
                   display finalMsg
+                  display newline
                   MOV     DI, 0000h
     L2:           MOV     AX, sum[DI]
                   MOV     AH, 00h
                   MOV     convertedNum, AX
-                  print   convertedNum
+                  MOV     AX, DI
+                  MOV     BX, width
+                  DIV     BL
+                  CMP     AH, 0000h
+                  JNE     printNumber
+                  display newline
+    printNumber:  print   convertedNum
                   display space
                   INC     DI
                   CMP     DI, length
