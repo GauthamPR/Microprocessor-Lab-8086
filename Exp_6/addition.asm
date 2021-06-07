@@ -5,11 +5,13 @@ data segment
 	mtx2Msg  DB 0ah, 0dh, "Enter matrix 2: $"
 	newline  DB 0ah, 0dh, "$"
 	finalMsg  DB 0ah, 0dh, "Sum: $"
+	finalTransposeMsg  DB 0ah, 0dh, "Transpose: $"
 	space     DB " $"
     convertedNum DW ?
     width     dw ?
     height    dw ?
     length    dw ?
+    endOfTranspose DW ?
 	mtx1      DW 4Fh dup(0000h)
 	mtx2      DW 4Fh dup(0000h)
 	sum       DW 4Fh dup(0000h)
@@ -74,6 +76,9 @@ code segment
                   MOV     BX, height
                   MUL     BX
                   MOV     length, AX
+                  ADD     AX, width
+                  DEC     AX
+                  MOV     endOfTranspose, AX
                   display mtx1Msg
                   MOV   CX, length
                   MOV   DI, 0000h
@@ -97,7 +102,6 @@ code segment
                   INC     DI
                   LOOP    L1
                   display finalMsg
-                  display newline
                   MOV     DI, 0000h
     L2:           MOV     AX, sum[DI]
                   MOV     AH, 00h
@@ -113,7 +117,34 @@ code segment
                   INC     DI
                   CMP     DI, length
                   JNE     L2
-	              mov     ah,4ch
+                  display newline
+                  display finalTransposeMsg
+                  display newline
+                  MOV     DI, 0000h
+    transpose:    MOV     AX, sum[DI]
+                  MOV     AH, 00h
+                  MOV     convertedNum, AX
+                  MOV     AX, DI
+                  MOV     BX, width
+                  DIV     BL
+    printTNumber: print   convertedNum
+                  display space
+                  ADD     DI, width
+                  CMP     DI, endOfTranspose
+                  JE      exit
+                  CMP     DI, length
+                  JGE     something
+                  JMP     transpose
+    something:    MOV     AX, DI
+                  MOV     BX, length
+                  DIV     BL
+                  MOV     BH, 00h
+                  MOV     BL, AH
+                  MOV     DI, BX
+                  INC     DI
+                  display newline
+                  JMP     transpose
+	exit:         mov     ah,4ch
 	              int     21h
 code ends
 end start
