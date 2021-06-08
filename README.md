@@ -9,3 +9,7 @@
 3. [Sub-string](/Exp_3)
 4. [String Replacement](/Exp_4)
 5. [Sorting and Searching](/Exp_5)
+6. [Matrix Operations](/Exp_6)
+    - Addition
+    - Transpose
+    <!-- Multiplication -->
