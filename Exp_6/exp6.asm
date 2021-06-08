@@ -26,26 +26,26 @@ display macro msg
 endm
 
 read macro num
-	     local L1,exit
-	     mov   ah,01h
-	     int   21h
-	     mov   ah,00h
-	     sub   ax,0030h
-	     mov   num,ax
-	L1:  mov   ah,01h
-	     int   21h
-	     cmp   al,0dh
-	     je    exit
-	     mov   ah,00h
-	     sub   ax,0030h
-	     mov   num1,ax
-	     mov   ax,num
-	     mov   bx,000ah
-	     mul   bx
-	     add   ax,num1
-	     mov   num,ax
-	     jmp   L1
-	exit:nop
+            local L1,exit
+            mov   ah,01h
+            int   21h
+            mov   ah,00h
+            sub   ax,0030h
+            mov   num,ax
+      L1:   mov   ah,01h
+            int   21h
+            cmp   al,0dh
+            je    exit
+            mov   ah,00h
+            sub   ax,0030h
+            mov   num1,ax
+            mov   ax,num
+            mov   bx,000ah
+            mul   bx
+            add   ax,num1
+            mov   num,ax
+	      jmp   L1
+	      exit:nop
 endm
 print macro num
 	      local L2,L3
