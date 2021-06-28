@@ -13,3 +13,14 @@
     - Addition
     - Transpose
     <!-- Multiplication -->
+7. [Arithmetic Operations](/Exp_7)
+    - Addition
+    - Subtraction
+    - Multiplication
+    - Division
+8. [Bitwise operations](/Exp_8)
+    - AND
+    - OR
+    - NOT
+    - XOR
+9. [Factorial](/Exp_9)
