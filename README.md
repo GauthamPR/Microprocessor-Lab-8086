@@ -24,3 +24,6 @@
     - NOT
     - XOR
 9. [Factorial](/Exp_9)
+10. [Searching](/Exp_10)
+    - Linear
+    - Binary
