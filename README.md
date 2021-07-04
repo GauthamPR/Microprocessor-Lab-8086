@@ -27,3 +27,6 @@
 10. [Searching](/Exp_10)
     - Linear
     - Binary
+11. [Conversion](/Exp_11)
+    - BCD
+    - ASCII
